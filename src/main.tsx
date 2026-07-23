@@ -5,6 +5,8 @@ import App from './App.tsx'
 import { ConvexProvider } from './components/ConvexProvider'
 import './index.css'
 
+console.log('hi')
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   // Remove StrictMode to avoid double useEffect invocations interfering with the loading screen timer
   <BrowserRouter>
