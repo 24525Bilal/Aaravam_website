@@ -4,6 +4,7 @@ import { useTeams, useScores } from '../hooks/useStore';
 import { Trophy, Flame } from 'lucide-react';
 import aaravamLogo from '../assets/logo-aaravam.jpg';
 import agastyaLogo from '../assets/logo-agastya.jpg';
+import LogoCanvas from '../components/LogoCanvas';
 
 const RANK_CONFIG = [
   { color: 'linear-gradient(135deg,#F59E0B,#D97706)', textColor: '#FDE68A', border: 'rgba(245,158,11,0.4)', glow: '0 0 30px rgba(245,158,11,0.3)', label: '1ST' },
@@ -111,19 +112,16 @@ export default function Home() {
             background: 'radial-gradient(ellipse at center, rgba(242,96,30,0.3) 0%, transparent 70%)',
             filter: 'blur(30px)', zIndex: -1, pointerEvents: 'none',
           }} />
-          <img
+          <LogoCanvas
             src={aaravamLogo}
             alt="ആരവം AARAVAM"
+            width={560}
             style={{
-              width: 'min(480px, 85vw)',
+              width: 'min(560px, 85vw)',
+              height: 'auto',
+              maxHeight: '350px',
               objectFit: 'contain',
-              // invert → white calligraphy, black bg
-              // contrast(20) → crushes all grey (checkerboard) to pure black → gone via screen
-              // sepia+saturate+hue-rotate → tints the white calligraphy to warm amber
-              filter: 'invert(1) contrast(20) sepia(1) saturate(4) hue-rotate(350deg) brightness(0.95)',
-              mixBlendMode: 'screen',
-              animation: 'float 4s ease-in-out infinite',
-              display: 'block',
+              margin: '0 auto',
             }}
           />
         </div>
