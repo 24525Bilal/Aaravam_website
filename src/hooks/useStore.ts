@@ -98,17 +98,22 @@ export function useEvents() {
 
 export function useScores() {
   const rawScores = useQuery(api.scores.list) ?? [];
+  const rawEvents = useQuery(api.events.list) ?? [];
   const mutateUpsert = useMutation(api.scores.upsert);
   const mutateClear = useMutation(api.scores.clearEventScores);
 
+  const validEventIds = useMemo(() => new Set(rawEvents.map((e: any) => e._id)), [rawEvents]);
+
   const scores = useMemo(() => {
-    return rawScores.map((s: any) => ({
-      id: s._id,
-      eventId: s.eventId,
-      teamId: s.teamId,
-      points: s.points,
-    }));
-  }, [rawScores]);
+    return rawScores
+      .filter((s: any) => validEventIds.has(s.eventId))
+      .map((s: any) => ({
+        id: s._id,
+        eventId: s.eventId,
+        teamId: s.teamId,
+        points: s.points,
+      }));
+  }, [rawScores, validEventIds]);
 
   const upsert = useCallback((eventId: string, teamId: string, points: number) => {
     mutateUpsert({ eventId, teamId, points });
@@ -131,18 +136,23 @@ export function useScores() {
 
 export function useWinners() {
   const rawWinners = useQuery(api.winners.list) ?? [];
+  const rawEvents = useQuery(api.events.list) ?? [];
   const mutateUpsert = useMutation(api.winners.upsert);
   const mutateDelete = useMutation(api.winners.deleteWinner);
 
+  const validEventIds = useMemo(() => new Set(rawEvents.map((e: any) => e._id)), [rawEvents]);
+
   const winners = useMemo(() => {
-    return rawWinners.map((w: any) => ({
-      id: w._id,
-      eventId: w.eventId,
-      firstPlace: w.firstPlace,
-      secondPlace: w.secondPlace,
-      thirdPlace: w.thirdPlace,
-    }));
-  }, [rawWinners]);
+    return rawWinners
+      .filter((w: any) => validEventIds.has(w.eventId))
+      .map((w: any) => ({
+        id: w._id,
+        eventId: w.eventId,
+        firstPlace: w.firstPlace,
+        secondPlace: w.secondPlace,
+        thirdPlace: w.thirdPlace,
+      }));
+  }, [rawWinners, validEventIds]);
 
   const upsert = useCallback((eventId: string, patch: { firstPlace?: string; secondPlace?: string; thirdPlace?: string }) => {
     mutateUpsert({ eventId, ...patch });
