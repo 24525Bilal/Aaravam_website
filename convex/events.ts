@@ -43,6 +43,25 @@ export const remove = mutation({
     id: v.id("events"),
   },
   handler: async (ctx, args) => {
+    // Delete the event
     await ctx.db.delete(args.id);
+
+    // Cascade delete associated scores
+    const eventScores = await ctx.db
+      .query("scores")
+      .withIndex("by_event", (q) => q.eq("eventId", args.id))
+      .collect();
+    for (const score of eventScores) {
+      await ctx.db.delete(score._id);
+    }
+
+    // Cascade delete associated winners
+    const eventWinners = await ctx.db
+      .query("winners")
+      .withIndex("by_event", (q) => q.eq("eventId", args.id))
+      .collect();
+    for (const winner of eventWinners) {
+      await ctx.db.delete(winner._id);
+    }
   },
 });

@@ -4,7 +4,10 @@ import { mutation, query } from "./_generated/server";
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("winners").collect();
+    const winners = await ctx.db.query("winners").collect();
+    const events = await ctx.db.query("events").collect();
+    const validEventIds = new Set(events.map(e => e._id));
+    return winners.filter(w => validEventIds.has(w.eventId as any));
   },
 });
 
