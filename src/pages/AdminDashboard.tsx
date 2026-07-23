@@ -74,7 +74,7 @@ export default function AdminDashboard() {
   }
   function saveScores() {
     for (const [tid, p] of Object.entries(ptsMap)) {
-      const n = parseInt(p, 10);
+      const n = parseFloat(p);
       if (!isNaN(n) && n >= 0) upsertScore(selEvent, tid, n);
     }
     setScMsg('✓ Scores saved'); setTimeout(() => setScMsg(''), 2500);
@@ -236,7 +236,7 @@ export default function AdminDashboard() {
                   {teams.map(t => (
                     <div key={t.id}>
                       <label style={LABEL}>{t.name}</label>
-                      <input type="number" min={0} style={INPUT} value={ptsMap[t.id] ?? ''} onChange={e => setPtsMap(p => ({ ...p, [t.id]: e.target.value }))} placeholder="0" />
+                      <input type="number" step="any" min={0} style={INPUT} value={ptsMap[t.id] ?? ''} onChange={e => setPtsMap(p => ({ ...p, [t.id]: e.target.value }))} placeholder="0" />
                     </div>
                   ))}
                 </div>
@@ -296,7 +296,7 @@ export default function AdminDashboard() {
                 </div>
 
                 <div><label style={LABEL}>Name</label><input style={INPUT} value={acForm.name} onChange={e => setAcForm(p => ({ ...p, name: e.target.value }))} placeholder="Winner's full name" /></div>
-                <div><label style={LABEL}>Points</label><input type="number" min={0} style={INPUT} value={acForm.points} onChange={e => setAcForm(p => ({ ...p, points: parseInt(e.target.value) || 0 }))} /></div>
+                <div><label style={LABEL}>Points</label><input type="number" step="any" min={0} style={INPUT} value={acForm.points} onChange={e => setAcForm(p => ({ ...p, points: parseFloat(e.target.value) || 0 }))} /></div>
                 <div><label style={LABEL}>Photo URL (optional)</label><input style={INPUT} value={acForm.photoUrl ?? ''} onChange={e => setAcForm(p => ({ ...p, photoUrl: e.target.value }))} placeholder="https://..." /></div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
