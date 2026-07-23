@@ -66,6 +66,18 @@ export default function ScoreCard() {
 
   function EventTable({ evList, title }: { evList: typeof onStage; title: string }) {
     if (evList.length === 0) return null;
+
+    const tableTotals = useMemo(() => {
+      const totals: Record<string, number> = {};
+      for (const t of teams) totals[t.id] = 0;
+      for (const ev of evList) {
+        for (const t of teams) {
+          totals[t.id] += scoreMap[ev.id]?.[t.id] ?? 0;
+        }
+      }
+      return totals;
+    }, [evList, teams, scoreMap]);
+
     return (
       <div style={{ marginBottom: 48 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
@@ -107,13 +119,13 @@ export default function ScoreCard() {
                   })}
                 </tr>
               ))}
-              {/* Totals */}
+              {/* Table Subtotals */}
               <tr style={{ background: 'rgba(22,16,9,0.95)', borderTop: '1px solid rgba(201,162,39,0.2)' }}>
-                <td style={{ ...S.tdLeft, fontFamily: "'Cinzel', serif", fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#C9A227', borderBottom: 'none' }}>Total</td>
+                <td style={{ ...S.tdLeft, fontFamily: "'Cinzel', serif", fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#B8A98A', borderBottom: 'none' }}>Subtotal</td>
                 {teams.map(t => (
                   <td key={t.id} style={{ ...S.td, borderBottom: 'none' }}>
-                    <span style={{ fontFamily: "'Cinzel', serif", fontWeight: 700, fontSize: 17, color: '#C9A227', textShadow: '0 0 10px rgba(201,162,39,0.5)' }}>
-                      {teamTotals[t.id] ?? 0}
+                    <span style={{ fontFamily: "'Cinzel', serif", fontWeight: 600, fontSize: 15, color: '#B8A98A' }}>
+                      {tableTotals[t.id]}
                     </span>
                   </td>
                 ))}
@@ -139,6 +151,21 @@ export default function ScoreCard() {
           <>
             <EventTable evList={onStage} title="On Stage Events" />
             <EventTable evList={offStage} title="Off Stage Events" />
+
+            {/* GLOBAL TOTALS */}
+            <div style={{ marginTop: 64, padding: '24px', background: 'rgba(31,22,13,0.8)', border: '1px solid rgba(201,162,39,0.3)', borderRadius: 4 }}>
+              <h3 style={{ fontFamily: "'Cinzel', serif", fontSize: 16, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#F5EFE0', margin: '0 0 24px', textAlign: 'center' }}>Global Totals</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: `repeat(${teams.length}, 1fr)`, gap: 16, textAlign: 'center' }}>
+                {teams.map(t => (
+                  <div key={t.id}>
+                    <p style={{ fontFamily: "'Cinzel', serif", fontSize: 11, letterSpacing: '0.1em', color: '#7A6E58', margin: '0 0 8px' }}>{t.name}</p>
+                    <p style={{ fontFamily: "'Cinzel', serif", fontWeight: 700, fontSize: 24, color: '#C9A227', textShadow: '0 0 12px rgba(201,162,39,0.4)', margin: 0 }}>
+                      {teamTotals[t.id] ?? 0}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </>
         )}
       </div>
